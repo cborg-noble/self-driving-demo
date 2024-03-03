@@ -1,0 +1,8 @@
+﻿Component,min,max
+Water,5,15
+Cement,3,25
+Fine aggregate,25,45
+Coarse aggregate,30,50
+Blast furnace slag,0,15
+Fly ash,0,10
+Superplasticizer,0,2
