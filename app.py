@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd 
+import datetime
 
 
 def main():
@@ -27,22 +28,39 @@ def main():
     st.write(df)
 
     st.subheader('Guiding Questions:')
+    with st.form("Guiding Questions", clear_on_submit=True, border=False):
+        user_input1 = st.text_input("1. How many experiments were used to train the AI model to predict concrete strength? What is the accuracy of the model? ", None)
+        user_input2 = st.text_area("2. Let’s identify a past experiment to compare against our model predictions. Use the table filters on the training data to find any formulations that meet the property targets outlined in table 1. How many past experiments hit these targets? Report one below to use as a benchmark. (or use the provided experiment, formulation-465)", None)
 
-    user_input = st.text_input("1. How many experiments were used to train the AI model to predict concrete strength? What is the accuracy of the model? ", None)
-    user_input = st.text_area("2. Let’s identify a past experiment to compare against our model predictions. Use the table filters on the training data to find any formulations that meet the property targets outlined in table 1. How many past experiments hit these targets? Report one below to use as a benchmark. (or use the provided experiment, formulation-465)", None)
-    
+        col3, col4 = st.columns(2)
 
-    col3, col4 = st.columns(2)
+        with col3:
+            df = pd.read_csv('run_465.csv')
+            st.write(df)
 
-    with col3:
-        df = pd.read_csv('run_465.csv')
-        st.write(df)
+        with col4:
+            df = pd.read_csv('run_465_output.csv')
+            st.write(df)
 
-    with col4:
-        df = pd.read_csv('run_465_output.csv')
-        st.write(df)
+        user_input3 = st.text_area("3. Perform an inverse design, with the targets noted in table 1. Were any formulations generated that meet all the target criteria? Calculate the percent improvement in each property relative to the past experiment you found in the previous question.", None)
 
-    user_input = st.text_area("3. Perform an inverse design, with the targets noted in table 1. Were any formulations generated that meet all the target criteria? Calculate the percent improvement in each property relative to the past experiment you found in the previous question.", None)
+        user_name = st.text_input("Name")
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            save([user_name, user_input1, user_input2, user_input3])
+            
+
+def append_to_file(filename, string):
+    with open(filename, "a") as file:
+        file.write(string)
+        file.write("\n")
+
+def save(strs):
+    datetimestr = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    result = strs.copy()
+    result.insert(0,datetimestr)
+    result_str = ",".join(['\"'+str(s)+'\"' for s in result])
+    append_to_file("responses.csv",result_str)
 
 
 
